@@ -5,8 +5,8 @@ package org.charmvz.analysis;
  */
 public class LogLoadException extends Throwable {
 
-	public LogLoadException(String filename) {
-		//TODO Auto-generated constructor stub
-	}
+    public LogLoadException(String filename) {
+        super();
+    }
 
 }
