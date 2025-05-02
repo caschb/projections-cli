@@ -92,7 +92,7 @@ public class FileUtils {
         findFilesInDirectory(new File(dirFromFile()), type);
     }
 
-    private String dirFromFile() {
+    public String dirFromFile() {
         // pre condition - filename is a full path name
         int index = baseName.lastIndexOf(File.separator);
         if (index > -1) {
@@ -181,4 +181,51 @@ public class FileUtils {
         return logFiles[App.LOG].get(peNum);
     }
 
+    public boolean hasLogFiles() {
+        return hasFiles[App.LOG];
+    }
+
+    public boolean hasSumFiles() {
+        return hasFiles[App.SUMMARY];
+    }
+
+    public boolean hasSumAccumulatedFile() {
+        return hasFiles[App.SUMACC];
+    }
+
+    public boolean hasSumDetailFiles() {
+        return hasFiles[App.SUMDETAIL];
+    }
+
+    public boolean hasPoseDopFiles() {
+        return hasFiles[App.DOP];
+    }
+
+    public SortedSet<Integer> getValidProcessorList(int type) {
+        String errorMsg = "";
+        switch (type) {
+        case App.LOG:
+            errorMsg = "Warning: No log files.";
+            break;
+        case App.SUMMARY:
+            errorMsg = "Warning: No summary files.";
+            break;
+        case App.SUMDETAIL:
+            errorMsg = "Warning: No summary detail files.";
+            break;
+        case App.DOP:
+            errorMsg = "Warning: No poselog files found.";
+            break;
+        default:
+            System.err.println("Internal Error: Unsupported log type " +
+                       "index " + type + " for valid processor " +
+                       "info.");
+            System.exit(-1);
+    
+        }
+        if (!hasFiles[type]) {
+            System.err.println(errorMsg);
+        }
+        return validPEs.get(type);
+    }
 }
