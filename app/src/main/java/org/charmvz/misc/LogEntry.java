@@ -173,7 +173,7 @@ public class LogEntry extends Defs {
   }
 
   public String toString() {
-    String output = type;
+    String output = type + "";
     output += "," + typeToString();
     output += "," + mtype;
     output += "," + time;

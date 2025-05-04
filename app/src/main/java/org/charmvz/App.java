@@ -72,7 +72,8 @@ public class App {
     var endTime = (int) analysis.getEndTime();
 
     var reader = new LogReader(analysis);
-    reader.read(1_000_000, 0, endTime, false, null, null);
+    // reader.read(1_000_000, 0, endTime, false, null, null);
+    reader.print_logs();
   }
 
   public static void main(String[] args) {

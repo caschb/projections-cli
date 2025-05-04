@@ -1,6 +1,9 @@
 package org.charmvz.analysis;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -230,6 +233,40 @@ public class LogReader
     }
   }
 
+  public void print_logs() {
+    SortedSet<Integer> processorList = new TreeSet<Integer>(analysis.getValidProcessorList());
+    for (Integer pe : processorList) {
+      GenericLogReader reader = new GenericLogReader(pe, analysis);
+      // PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out), false);
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out), 8192);
+      long count = 0;
+      try {
+        while (true) { // EndOfLogException will terminate loop
+          count += 1;
+          var curData = reader.nextEvent();
+          // System.out.println(curData);
+          // out.write(curData.toString() + "\n");
+          writer.write(curData.toString() + "\n");
+          if(count % 1_000 == 0) {
+            writer.flush();
+            count = 0;
+          }
+        }
+      } catch (EndOfLogSuccess e) {
+        System.out.println("Cool!");
+      } catch (IOException e) {
+        System.err.println("Oh no");
+        System.exit(-1);
+      }
+      try {
+        writer.flush();
+      } catch (IOException e) {
+        System.err.println("Oh no");
+        System.exit(-1);
+      }
+    }
+  }
+
   /**
    * Read log files for a list of processors. If the list of PEs is null, load all
    * available PEs.
@@ -281,11 +318,18 @@ public class LogReader
 
       boolean isProcessing = false;
       LogEntry lastBeginData = null;
+      PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out), false);
+      long count = 0;
 
       try {
         while (true) { // EndOfLogException will terminate loop
+          count += 1;
           curData = reader.nextEvent();
-          System.out.println(curData);
+          // System.out.println(curData);
+          out.write(curData.toString() + "\n");
+          if(count % 2 == 0) {
+            out.flush();
+          }
           nLines++;
           switch (curData.type) {
             case BEGIN_IDLE:
@@ -352,6 +396,7 @@ public class LogReader
         System.err.println("Error: Failure to read log file!");
         System.exit(-1);
       }
+      // out.flush();
 
       try {
         reader.close();
